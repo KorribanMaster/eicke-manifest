@@ -14,12 +14,14 @@ RUN wget -q https://storage.googleapis.com/git-repo-downloads/repo \
         -O /usr/local/bin/repo \
     && chmod a+x /usr/local/bin/repo
 
-# python3-websockets is required by BitBake to talk to the upstream hash-
-# equivalence server (BB_HASHSERVE_UPSTREAM = wss://hashserv.yoctoproject.org/ws),
-# which is what unlocks good reuse from the public sstate mirror. It is not in
-# the base crops/poky image.
+# BitBake's hash-equivalence client (BB_HASHSERVE_UPSTREAM =
+# wss://hashserv.yoctoproject.org/ws) — which unlocks good reuse from the public
+# sstate mirror — needs the `websockets` module with `open_timeout` support
+# (>= 10). Ubuntu 22.04's apt package is 9.1 (too old), so install a modern one
+# via pip; /usr/local takes precedence over the distro package.
 RUN apt-get update \
-    && apt-get install -y --no-install-recommends python3-websockets \
+    && apt-get install -y --no-install-recommends python3-pip \
+    && pip3 install --no-cache-dir "websockets==12.0" \
     && rm -rf /var/lib/apt/lists/*
 
 # IMPORTANT: do not override the CROPS ENTRYPOINT/CMD — it performs the
