@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<manifest>
+  <!-- Upstream sources -->
+  <remote name="yocto"    fetch="https://git.yoctoproject.org/"/>
+  <remote name="oe"       fetch="https://github.com/openembedded/"/>
+  <remote name="swupdate" fetch="https://github.com/sbabic/"/>
+  <!-- Our own (private) layer(s): SSH so repo sync can authenticate -->
+  <remote name="github"   fetch="ssh://git@github.com/KorribanMaster/"/>
+
+  <!-- Everything tracks the scarthgap (5.0 LTS) release unless overridden -->
+  <default sync-j="4" revision="scarthgap"/>
+
+  <project name="poky"              path="poky"              remote="yocto"/>
+  <project name="meta-openembedded" path="meta-openembedded" remote="oe"/>
+  <project name="meta-swupdate"     path="meta-swupdate"     remote="swupdate"/>
+
+  <project name="meta-eicke"        path="meta-eicke"        remote="github" revision="main">
+    <!-- Expose the build helper at the workspace root after `repo sync` -->
+    <copyfile src="setup-environment" dest="setup-environment"/>
+  </project>
+</manifest>
