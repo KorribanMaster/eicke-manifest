@@ -1,11 +1,13 @@
 # Yocto build container for the meta-eicke project.
 #
 # Built on the official CROPS/poky image, which ships every Yocto host
-# dependency for Ubuntu 24.04 and — via its entrypoint (distro-entry.sh) —
+# dependency for Ubuntu 22.04 and — via its entrypoint (distro-entry.sh) —
 # transparently maps the UID/GID of the bind-mounted workdir owner, so files
 # created in the build stay owned by the host user. We only add Google's
 # `repo` tool, which CROPS does not bundle.
-FROM crops/poky:ubuntu-24.04
+# (crops/poky's newest Ubuntu tag is ubuntu-22.04; 22.04 is a supported
+# scarthgap build host.)
+FROM crops/poky:ubuntu-22.04
 
 USER root
 RUN curl -fsSL https://storage.googleapis.com/git-repo-downloads/repo \
