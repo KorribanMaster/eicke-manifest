@@ -14,5 +14,13 @@ RUN wget -q https://storage.googleapis.com/git-repo-downloads/repo \
         -O /usr/local/bin/repo \
     && chmod a+x /usr/local/bin/repo
 
+# python3-websockets is required by BitBake to talk to the upstream hash-
+# equivalence server (BB_HASHSERVE_UPSTREAM = wss://hashserv.yoctoproject.org/ws),
+# which is what unlocks good reuse from the public sstate mirror. It is not in
+# the base crops/poky image.
+RUN apt-get update \
+    && apt-get install -y --no-install-recommends python3-websockets \
+    && rm -rf /var/lib/apt/lists/*
+
 # IMPORTANT: do not override the CROPS ENTRYPOINT/CMD — it performs the
 # user-mapping setup. Invoke the container with `--workdir=/workdir`.
