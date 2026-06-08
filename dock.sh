@@ -14,16 +14,25 @@ set -euo pipefail
 IMG="eicke-yocto:scarthgap"
 HERE="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 
-docker build -t "$IMG" "$HERE/docker"
+# Use host networking: some hosts (and CI sandboxes) cannot create the docker
+# bridge veth pair, and host networking is also what `runqemu` wants.
+docker build --network host -t "$IMG" "$HERE/docker"
 
-# Extra flags useful for `runqemu` inside the container (KVM acceleration and
-# host networking). Enable by exporting EICKE_DOCKER_QEMU=1.
-qemu_flags=()
-if [[ "${EICKE_DOCKER_QEMU:-0}" == "1" ]]; then
-    qemu_flags=(--device /dev/kvm --network host)
+# Allocate a TTY only for an interactive shell (no command args); passing a
+# command (e.g. for background/non-interactive runs) must not request a TTY.
+tty_flags=(-i)
+if [[ $# -eq 0 && -t 0 ]]; then
+    tty_flags=(-it)
 fi
 
-exec docker run --rm -it \
+# KVM acceleration for `runqemu` (needs /dev/kvm). Enable with EICKE_DOCKER_QEMU=1.
+kvm_flags=()
+if [[ "${EICKE_DOCKER_QEMU:-0}" == "1" ]]; then
+    kvm_flags=(--device /dev/kvm)
+fi
+
+exec docker run --rm "${tty_flags[@]}" \
+    --network host \
     -v "$PWD:/workdir" \
-    "${qemu_flags[@]}" \
+    "${kvm_flags[@]}" \
     "$IMG" --workdir=/workdir "$@"

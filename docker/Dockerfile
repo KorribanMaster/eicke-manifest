@@ -10,8 +10,8 @@
 FROM crops/poky:ubuntu-22.04
 
 USER root
-RUN curl -fsSL https://storage.googleapis.com/git-repo-downloads/repo \
-        -o /usr/local/bin/repo \
+RUN wget -q https://storage.googleapis.com/git-repo-downloads/repo \
+        -O /usr/local/bin/repo \
     && chmod a+x /usr/local/bin/repo
 
 # IMPORTANT: do not override the CROPS ENTRYPOINT/CMD — it performs the
