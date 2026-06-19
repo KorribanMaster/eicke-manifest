@@ -20,6 +20,19 @@ Arch Linux). The host only needs **Docker** and **git**. (The `crops/poky`
 container is just a build host with the right dependencies; it does not contain
 the poky metadata.)
 
+## Manifest layout
+
+Manifests live under `manifests/`, grouped by maturity:
+
+| Directory | Purpose |
+|---|---|
+| `manifests/experimental/` | Bleeding-edge / in-progress manifests. Track upstream release branches and may pin our own layers to feature branches. **Not** guaranteed to build. |
+| `manifests/integration/` | Manifests under integration testing — being validated before promotion to a release. |
+| `manifests/releases/` | Stable, fully pinned manifests for shipped releases (layers pinned to tags / explicit SRCREVs for reproducibility). |
+
+The active migration manifest is **`manifests/experimental/wrynose.xml`**
+(Yocto 6.0 LTS). Pass it to `repo init` with `-m manifests/experimental/wrynose.xml`.
+
 ## Layers
 
 | Project | Source | Branch |
@@ -29,7 +42,7 @@ the poky metadata.)
 | meta-yocto (meta-yocto-bsp) | https://git.yoctoproject.org/meta-yocto | wrynose |
 | meta-openembedded | https://github.com/openembedded/meta-openembedded | wrynose |
 | meta-swupdate | https://github.com/sbabic/meta-swupdate | wrynose |
-| [meta-eicke](https://github.com/KorribanMaster/meta-eicke) | this project | main |
+| [meta-eicke](https://github.com/KorribanMaster/meta-eicke) | this project | wrynose-6.0-migration (experimental) |
 
 ## Quick start
 
@@ -43,8 +56,9 @@ mkdir -p yocto-workspace && cd yocto-workspace
 ../eicke-manifest/dock.sh
 
 # --- inside the container (cwd = /workdir) ---
-# 3. Fetch all sources
-repo init -u ssh://git@github.com/KorribanMaster/eicke-manifest -b main -m default.xml
+# 3. Fetch all sources (experimental wrynose 6.0 manifest)
+repo init -u ssh://git@github.com/KorribanMaster/eicke-manifest \
+          -b wrynose-6.0-migration -m manifests/experimental/wrynose.xml
 repo sync
 
 # 4. Set up the build environment (uses meta-eicke's TEMPLATECONF)

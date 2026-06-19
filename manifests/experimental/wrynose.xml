@@ -1,4 +1,13 @@
 <?xml version="1.0" encoding="UTF-8"?>
+<!--
+  EXPERIMENTAL manifest: Yocto wrynose (6.0 LTS) migration, in progress.
+  Tracks upstream release branches and pins meta-eicke to a feature branch.
+  Promote to manifests/integration/ once it builds & boots, then to
+  manifests/releases/ (with pinned SRCREVs) when shipped.
+
+  Use with:  repo init -u <eicke-manifest-url> -b <branch> \
+                       -m manifests/experimental/wrynose.xml
+-->
 <manifest>
   <!-- Upstream sources -->
   <remote name="yocto"    fetch="https://git.yoctoproject.org/"/>
