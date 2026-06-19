@@ -1,12 +1,15 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!--
-  EXPERIMENTAL manifest: Yocto wrynose (6.0 LTS) migration, in progress.
-  Tracks upstream release branches and pins meta-eicke to a feature branch.
-  Promote to manifests/integration/ once it builds & boots, then to
+  INTEGRATION manifest: Yocto wrynose (6.0 LTS). Builds and boots, and passes
+  the A/B SWUpdate round-trip on qemux86-64. Tracks upstream release branches
+  and (for now) pins meta-eicke to the wrynose-6.0-migration branch; switch that
+  to "main" once meta-eicke is merged. The top-level default.xml symlinks here,
+  so a bare `repo init` resolves to this manifest. Promote to
   manifests/releases/ (with pinned SRCREVs) when shipped.
 
-  Use with:  repo init -u <eicke-manifest-url> -b <branch> \
-                       -m manifests/experimental/wrynose.xml
+  Use with:  repo init -u <eicke-manifest-url> -b main \
+                       -m manifests/integration/wrynose.xml
+             (or just omit -m to use the default.xml symlink)
 -->
 <manifest>
   <!-- Upstream sources -->

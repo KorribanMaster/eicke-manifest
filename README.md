@@ -43,10 +43,11 @@ Manifests live under `manifests/`, grouped by maturity:
 | `manifests/integration/` | Manifests under validation — known-good or being qualified before a release. |
 | `manifests/releases/` | Stable, fully pinned manifests for shipped releases (layers pinned to tags / explicit SRCREVs for reproducibility). |
 
-- `default.xml` (repo root) is a **symlink to `manifests/integration/scarthgap.xml`**,
-  so a bare `repo init` (no `-m`) resolves to the known-good **scarthgap (5.0 LTS)**
-  baseline.
-- `manifests/experimental/wrynose.xml` is the **wrynose (6.0 LTS)** migration.
+- `default.xml` (repo root) is a **symlink to `manifests/integration/wrynose.xml`**,
+  so a bare `repo init` (no `-m`) resolves to the validated **wrynose (6.0 LTS)**
+  build.
+- `manifests/integration/scarthgap.xml` is the previous known-good **scarthgap
+  (5.0 LTS)** baseline.
 
 ## Usage
 
@@ -57,17 +58,14 @@ mkdir eicke_yocto && cd eicke_yocto
 
 # --- inside the container (cwd = /workdir) ---
 
-# 2a. Fetch sources — known-good scarthgap baseline (default.xml symlink):
-repo init -u ssh://git@github.com/KorribanMaster/eicke-manifest -b wrynose-6.0-migration
-# 2b. ...or the experimental wrynose (6.0) migration:
+# 2a. Fetch sources — default is wrynose 6.0 (default.xml symlink):
+repo init -u ssh://git@github.com/KorribanMaster/eicke-manifest -b main
+# 2b. ...or the previous scarthgap 5.0 baseline:
 repo init -u ssh://git@github.com/KorribanMaster/eicke-manifest \
-          -b wrynose-6.0-migration -m manifests/experimental/wrynose.xml
+          -b main -m manifests/integration/scarthgap.xml
 
 repo sync
 ```
-
-> Once the migration is merged to `main`, drop the `-b wrynose-6.0-migration`
-> flag — `main` is the default branch.
 
 ## Build the image
 
