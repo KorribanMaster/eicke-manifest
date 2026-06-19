@@ -1,6 +1,6 @@
 # eicke-manifest
 
-A [`repo`](https://gerrit.googlesource.com/git-repo/) manifest that assembles a
+A [`repo`](https://gerrit.googlesource.com/git-repo) manifest that assembles a
 reproducible Yocto build for a basic **wrynose (6.0 LTS)** x86-64 image with:
 
 - a custom **`eicke` distro** (systemd-based)
@@ -20,22 +20,66 @@ Arch Linux). The host only needs **Docker** and **git**. (The `crops/poky`
 container is just a build host with the right dependencies; it does not contain
 the poky metadata.)
 
+## Prerequisites
+
+Install the [`repo`](https://gerrit.googlesource.com/git-repo) tool:
+
+```shell
+# assuming ~/.local/bin/ exists and is on your PATH
+curl https://storage.googleapis.com/git-repo-downloads/repo > ~/.local/bin/repo
+chmod a+rx ~/.local/bin/repo
+```
+
+You also need **Docker**, **git**, and an **SSH key with access to the (private)
+repos** (the manifest fetches over SSH).
+
 ## Manifest layout
 
 Manifests live under `manifests/`, grouped by maturity:
 
-| Directory | Purpose |
+| Path | Purpose |
 |---|---|
 | `manifests/experimental/` | Bleeding-edge / in-progress manifests. Track upstream release branches and may pin our own layers to feature branches. **Not** guaranteed to build. |
-| `manifests/integration/` | Manifests under integration testing — being validated before promotion to a release. |
+| `manifests/integration/` | Manifests under validation — known-good or being qualified before a release. |
 | `manifests/releases/` | Stable, fully pinned manifests for shipped releases (layers pinned to tags / explicit SRCREVs for reproducibility). |
 
-The active migration manifest is **`manifests/experimental/wrynose.xml`**
-(Yocto 6.0 LTS). Pass it to `repo init` with `-m manifests/experimental/wrynose.xml`.
+- `default.xml` (repo root) is a **symlink to `manifests/integration/scarthgap.xml`**,
+  so a bare `repo init` (no `-m`) resolves to the known-good **scarthgap (5.0 LTS)**
+  baseline.
+- `manifests/experimental/wrynose.xml` is the **wrynose (6.0 LTS)** migration.
+
+## Usage
+
+```shell
+# 1. Create an empty workspace and enter the build container
+mkdir eicke_yocto && cd eicke_yocto
+../eicke-manifest/dock.sh          # build + enter the crops/poky container (cwd bind-mounted)
+
+# --- inside the container (cwd = /workdir) ---
+
+# 2a. Fetch sources — known-good scarthgap baseline (default.xml symlink):
+repo init -u ssh://git@github.com/KorribanMaster/eicke-manifest -b wrynose-6.0-migration
+# 2b. ...or the experimental wrynose (6.0) migration:
+repo init -u ssh://git@github.com/KorribanMaster/eicke-manifest \
+          -b wrynose-6.0-migration -m manifests/experimental/wrynose.xml
+
+repo sync
+```
+
+> Once the migration is merged to `main`, drop the `-b wrynose-6.0-migration`
+> flag — `main` is the default branch.
+
+## Build the image
+
+```shell
+. ./setup-environment              # sets TEMPLATECONF + runs oe-init-build-env, cd's into ./build
+bitbake eicke-image                # -> tmp/deploy/images/<machine>/eicke-image-*.wic
+bitbake eicke-update-image         # -> the *.swu update artifact
+```
 
 ## Layers
 
-| Project | Source | Branch |
+| Project | Source | Branch (wrynose) |
 |---|---|---|
 | bitbake | https://github.com/openembedded/bitbake | 2.18 |
 | openembedded-core | https://github.com/openembedded/openembedded-core | wrynose |
@@ -44,30 +88,9 @@ The active migration manifest is **`manifests/experimental/wrynose.xml`**
 | meta-swupdate | https://github.com/sbabic/meta-swupdate | wrynose |
 | [meta-eicke](https://github.com/KorribanMaster/meta-eicke) | this project | wrynose-6.0-migration (experimental) |
 
-## Quick start
-
-```sh
-# 1. Get the manifest (for the Docker env + repo URL). Repos are private, so
-#    these use SSH (the container/host must have an SSH key with GitHub access).
-git clone git@github.com:KorribanMaster/eicke-manifest.git
-
-# 2. Create an empty workspace and enter the build container
-mkdir -p yocto-workspace && cd yocto-workspace
-../eicke-manifest/dock.sh
-
-# --- inside the container (cwd = /workdir) ---
-# 3. Fetch all sources (experimental wrynose 6.0 manifest)
-repo init -u ssh://git@github.com/KorribanMaster/eicke-manifest \
-          -b wrynose-6.0-migration -m manifests/experimental/wrynose.xml
-repo sync
-
-# 4. Set up the build environment (uses meta-eicke's TEMPLATECONF)
-. ./setup-environment            # creates ./build and cd's into it
-
-# 5. Build
-bitbake eicke-image              # -> tmp/deploy/images/<machine>/eicke-image-*.wic
-bitbake eicke-update-image       # -> the *.swu update artifact
-```
+The scarthgap baseline (`manifests/integration/scarthgap.xml`) instead tracks
+**poky**, **meta-openembedded** and **meta-swupdate** on `scarthgap`, with
+`meta-eicke` on `main`.
 
 ### Targets
 
