@@ -7,14 +7,26 @@
   <!-- Our own (private) layer(s): SSH so repo sync can authenticate -->
   <remote name="github"   fetch="ssh://git@github.com/KorribanMaster/"/>
 
-  <!-- Everything tracks the scarthgap (5.0 LTS) release unless overridden -->
-  <default sync-j="4" revision="scarthgap"/>
+  <!-- Everything tracks the wrynose (6.0 LTS) release unless overridden.
+       wrynose is shipped as individual layers; poky (the combined repo) is
+       wound down and has no wrynose branch, so we assemble the build from
+       bitbake + openembedded-core + meta-yocto directly. -->
+  <default sync-j="4" revision="wrynose"/>
 
-  <project name="poky"              path="poky"              remote="yocto"/>
+  <!-- Core build tooling and metadata (was bundled inside poky). bitbake uses
+       version-numbered branches; wrynose requires bitbake 2.18.
+       openembedded-core/oe-init-build-env finds bitbake at ../bitbake. -->
+  <project name="bitbake"           path="bitbake"           remote="oe"     revision="2.18"/>
+  <project name="openembedded-core" path="openembedded-core" remote="oe"/>
+
+  <!-- meta-yocto provides meta-yocto-bsp (genericx86-64 machine). We do NOT
+       use meta-poky from this repo; the build uses the custom 'eicke' distro. -->
+  <project name="meta-yocto"        path="meta-yocto"        remote="yocto"/>
+
   <project name="meta-openembedded" path="meta-openembedded" remote="oe"/>
   <project name="meta-swupdate"     path="meta-swupdate"     remote="swupdate"/>
 
-  <project name="meta-eicke"        path="meta-eicke"        remote="github" revision="main">
+  <project name="meta-eicke"        path="meta-eicke"        remote="github" revision="wrynose-6.0-migration">
     <!-- Expose the build helper at the workspace root after `repo sync` -->
     <copyfile src="setup-environment" dest="setup-environment"/>
   </project>

@@ -1,25 +1,34 @@
 # eicke-manifest
 
 A [`repo`](https://gerrit.googlesource.com/git-repo/) manifest that assembles a
-reproducible Yocto build for a basic **poky (scarthgap / 5.0 LTS)** x86-64 image
-with:
+reproducible Yocto build for a basic **wrynose (6.0 LTS)** x86-64 image with:
 
+- a custom **`eicke` distro** (systemd-based)
 - **GRUB-EFI** bootloader
 - a custom **WIC image with an A/B (dual-copy) rootfs layout**
 - **SWUpdate** for image updates (local `.swu`, applied via CLI / USB / web UI)
 
+As of 6.0, the Yocto Project no longer ships the combined **poky** repo for new
+releases, so this manifest assembles the build from the individual upstream
+layers (**bitbake**, **openembedded-core**, **meta-yocto**) instead of poky, and
+uses the custom `eicke` distro rather than the poky reference distro.
+
 The build runs **inside a Docker container** (based on the official
 [`crops/poky`](https://hub.docker.com/r/crops/poky) image) because the layer is
 intended to be built from hosts that Yocto does not officially support (e.g.
-Arch Linux). The host only needs **Docker** and **git**.
+Arch Linux). The host only needs **Docker** and **git**. (The `crops/poky`
+container is just a build host with the right dependencies; it does not contain
+the poky metadata.)
 
 ## Layers
 
 | Project | Source | Branch |
 |---|---|---|
-| poky | https://git.yoctoproject.org/poky | scarthgap |
-| meta-openembedded | https://github.com/openembedded/meta-openembedded | scarthgap |
-| meta-swupdate | https://github.com/sbabic/meta-swupdate | scarthgap |
+| bitbake | https://github.com/openembedded/bitbake | 2.18 |
+| openembedded-core | https://github.com/openembedded/openembedded-core | wrynose |
+| meta-yocto (meta-yocto-bsp) | https://git.yoctoproject.org/meta-yocto | wrynose |
+| meta-openembedded | https://github.com/openembedded/meta-openembedded | wrynose |
+| meta-swupdate | https://github.com/sbabic/meta-swupdate | wrynose |
 | [meta-eicke](https://github.com/KorribanMaster/meta-eicke) | this project | main |
 
 ## Quick start
