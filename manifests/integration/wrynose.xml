@@ -2,8 +2,7 @@
 <!--
   INTEGRATION manifest: Yocto wrynose (6.0 LTS). Builds and boots, and passes
   the A/B SWUpdate round-trip on qemux86-64. Tracks upstream release branches
-  and (for now) pins meta-eicke to the wrynose-6.0-migration branch; switch that
-  to "main" once meta-eicke is merged. The top-level default.xml symlinks here,
+  and the meta-eicke "wrynose" branch. The top-level default.xml symlinks here,
   so a bare `repo init` resolves to this manifest. Promote to
   manifests/releases/ (with pinned SRCREVs) when shipped.
 
@@ -38,7 +37,7 @@
   <project name="meta-openembedded" path="meta-openembedded" remote="oe"/>
   <project name="meta-swupdate"     path="meta-swupdate"     remote="swupdate"/>
 
-  <project name="meta-eicke"        path="meta-eicke"        remote="github" revision="wrynose-6.0-migration">
+  <project name="meta-eicke"        path="meta-eicke"        remote="github" revision="wrynose">
     <!-- Expose the build helper at the workspace root after `repo sync` -->
     <copyfile src="setup-environment" dest="setup-environment"/>
   </project>

@@ -24,7 +24,7 @@
   <project name="meta-openembedded" path="meta-openembedded" remote="oe"/>
   <project name="meta-swupdate"     path="meta-swupdate"     remote="swupdate"/>
 
-  <project name="meta-eicke"        path="meta-eicke"        remote="github" revision="main">
+  <project name="meta-eicke"        path="meta-eicke"        remote="github" revision="scarthgap">
     <!-- Expose the build helper at the workspace root after `repo sync` -->
     <copyfile src="setup-environment" dest="setup-environment"/>
   </project>
