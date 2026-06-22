@@ -15,6 +15,8 @@
   <remote name="yocto"    fetch="https://git.yoctoproject.org/"/>
   <remote name="oe"       fetch="https://github.com/openembedded/"/>
   <remote name="swupdate" fetch="https://github.com/sbabic/"/>
+  <!-- meta-secure-core: UEFI Secure Boot + TPM2 + encrypted storage -->
+  <remote name="windriver" fetch="https://github.com/Wind-River/"/>
   <!-- Our own (private) layer(s): SSH so repo sync can authenticate -->
   <remote name="github"   fetch="ssh://git@github.com/KorribanMaster/"/>
 
@@ -36,6 +38,13 @@
 
   <project name="meta-openembedded" path="meta-openembedded" remote="oe"/>
   <project name="meta-swupdate"     path="meta-swupdate"     remote="swupdate"/>
+
+  <!-- UEFI Secure Boot (eicke-image-prod) + TPM2 + encrypted-storage. Provides
+       the meta-signing-key, meta-secure-core-common, meta-efi-secure-boot,
+       meta-tpm2 and meta-encrypted-storage sublayers (added to bblayers.conf).
+       meta-efi-secure-boot also needs meta-openembedded/meta-perl (already in
+       the meta-openembedded checkout above). -->
+  <project name="meta-secure-core"  path="meta-secure-core"  remote="windriver" revision="wrynose"/>
 
   <project name="meta-eicke"        path="meta-eicke"        remote="github" revision="wrynose">
     <!-- Expose the build helper at the workspace root after `repo sync` -->
