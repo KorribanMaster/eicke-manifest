@@ -53,24 +53,24 @@ Manifests live under `manifests/`, grouped by maturity:
 
 ```shell
 # 1. Create an empty workspace and enter the build container
-mkdir eicke_yocto && cd eicke_yocto
-../eicke-manifest/dock.sh          # build + enter the crops/poky container (cwd bind-mounted)
-
-# --- inside the container (cwd = /workdir) ---
-
+mkdir -p ~/yocto/workspace && cd ~/yocto/workspace
+mkdir -p ~/yocto/sstate-cache/
+mkdir -p ~/yocto/downloads/
+mkdir -p ~/yocto/keys/
 # 2a. Fetch sources — default is wrynose 6.0 (default.xml symlink):
 repo init -u ssh://git@github.com/KorribanMaster/eicke-manifest -b main
 # 2b. ...or the previous scarthgap 5.0 baseline:
 repo init -u ssh://git@github.com/KorribanMaster/eicke-manifest \
           -b main -m manifests/integration/scarthgap.xml
-
 repo sync
+.repo/manifests/dock.sh            # build + enter the build container (cwd bind-mounted)
 ```
 
 ## Build the image
 
 ```shell
-. ./setup-environment              # sets TEMPLATECONF + runs oe-init-build-env, cd's into ./build
+# inside the container
+source integration-init-build-env  # sets TEMPLATECONF + runs oe-init-build-env, cd's into ./build-integration
 bitbake eicke-image                # -> tmp/deploy/images/<machine>/eicke-image-*.wic
 bitbake eicke-update-image         # -> the *.swu update artifact
 ```
@@ -84,11 +84,12 @@ bitbake eicke-update-image         # -> the *.swu update artifact
 | meta-yocto (meta-yocto-bsp) | https://git.yoctoproject.org/meta-yocto | wrynose |
 | meta-openembedded | https://github.com/openembedded/meta-openembedded | wrynose |
 | meta-swupdate | https://github.com/sbabic/meta-swupdate | wrynose |
-| [meta-eicke](https://github.com/KorribanMaster/meta-eicke) | this project | wrynose-6.0-migration (experimental) |
+| meta-secure-core (UEFI Secure Boot, TPM2, encrypted storage) | https://github.com/Wind-River/meta-secure-core | wrynose |
+| [meta-eicke](https://github.com/KorribanMaster/meta-eicke) | https://github.com/KorribanMaster/meta-eicke | wrynose |
 
 The scarthgap baseline (`manifests/integration/scarthgap.xml`) instead tracks
 **poky**, **meta-openembedded** and **meta-swupdate** on `scarthgap`, with
-`meta-eicke` on `main`.
+`meta-eicke` on `scarthgap`.
 
 ### Targets
 
@@ -98,4 +99,4 @@ The scarthgap baseline (`manifests/integration/scarthgap.xml`) instead tracks
 - `MACHINE = "genericx86-64"` — real 64-bit x86 hardware; flash the `.wic` with
   `bmaptool` / `dd`.
 
-Edit `build/conf/local.conf` to switch the machine.
+Edit `build-integration/conf/local.conf` to switch the machine.
