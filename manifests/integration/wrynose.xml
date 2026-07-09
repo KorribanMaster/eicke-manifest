@@ -29,25 +29,27 @@
   <!-- Core build tooling and metadata (was bundled inside poky). bitbake uses
        version-numbered branches; wrynose requires bitbake 2.18.
        openembedded-core/oe-init-build-env finds bitbake at ../bitbake. -->
-  <project name="bitbake"           path="bitbake"           remote="oe"     revision="2.18"/>
-  <project name="openembedded-core" path="openembedded-core" remote="oe"/>
+  <project name="bitbake"           path="sources/bitbake"           remote="oe"     revision="2.18"/>
+  <project name="openembedded-core" path="sources/openembedded-core" remote="oe"/>
 
   <!-- meta-yocto provides meta-yocto-bsp (genericx86-64 machine). We do NOT
        use meta-poky from this repo; the build uses the custom 'eicke' distro. -->
-  <project name="meta-yocto"        path="meta-yocto"        remote="yocto"/>
+  <project name="meta-yocto"        path="sources/meta-yocto"        remote="yocto"/>
 
-  <project name="meta-openembedded" path="meta-openembedded" remote="oe"/>
-  <project name="meta-swupdate"     path="meta-swupdate"     remote="swupdate"/>
+  <project name="meta-openembedded" path="sources/meta-openembedded" remote="oe"/>
+  <project name="meta-swupdate"     path="sources/meta-swupdate"     remote="swupdate"/>
 
   <!-- UEFI Secure Boot (eicke-image-prod) + TPM2 + encrypted-storage. Provides
        the meta-signing-key, meta-secure-core-common, meta-efi-secure-boot,
        meta-tpm2 and meta-encrypted-storage sublayers (added to bblayers.conf).
        meta-efi-secure-boot also needs meta-openembedded/meta-perl (already in
        the meta-openembedded checkout above). -->
-  <project name="meta-secure-core"  path="meta-secure-core"  remote="windriver" revision="wrynose"/>
+  <project name="meta-secure-core"  path="sources/meta-secure-core"  remote="windriver" revision="wrynose"/>
 
-  <project name="meta-eicke"        path="meta-eicke"        remote="github" revision="wrynose">
+  <project name="meta-eicke"        path="sources/meta-eicke"        remote="github" revision="wrynose">
     <!-- Expose the build helper at the workspace root after `repo sync` -->
-    <copyfile src="setup-environment" dest="setup-environment"/>
+    <linkfile src="README.md" dest="README.md"/>
+    <linkfile src="scripts/eicke-init-build-env" dest="integration-init-build-env"/>
+
   </project>
 </manifest>
