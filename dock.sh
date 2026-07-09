@@ -11,7 +11,7 @@
 # The host only needs Docker + git; all Yocto tooling lives in the container.
 set -euo pipefail
 
-IMG="eicke-yocto:scarthgap"
+IMG="eicke-yocto:wrynose"
 HERE="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 
 # Use host networking: some hosts (and CI sandboxes) cannot create the docker
@@ -34,5 +34,8 @@ fi
 exec docker run --rm "${tty_flags[@]}" \
     --network host \
     -v "$PWD:/workdir" \
+    -v $HOME/yocto/sstate-cache/:/yocto/sstate-cache \
+    -v $HOME/yocto/downloads/:/yocto/downloads \
+    -v $HOME/yocto/keys/:/yocto/keys \
     "${kvm_flags[@]}" \
     "$IMG" --workdir=/workdir "$@"
