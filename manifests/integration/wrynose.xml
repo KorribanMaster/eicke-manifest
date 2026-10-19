@@ -54,6 +54,11 @@
        meta-eicke (meta-digi has no wrynose branch). -->
   <project name="meta-freescale"    path="sources/meta-freescale"    remote="freescale" revision="wrynose"/>
 
+  <!-- meta-arm: trusted-firmware-a (TF-A bl31) for the te0820 (Zynq
+       UltraScale+), TFA_PLATFORM zynqmp. Only meta-arm/meta-arm and its
+       dependency meta-arm/meta-arm-toolchain go into bblayers.conf. -->
+  <project name="meta-arm"          path="sources/meta-arm"          remote="yocto"/>
+
   <project name="meta-eicke"        path="sources/meta-eicke"        remote="github" revision="wrynose">
     <!-- Expose the build helper at the workspace root after `repo sync` -->
     <linkfile src="README.md" dest="README.md"/>
