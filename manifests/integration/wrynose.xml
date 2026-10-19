@@ -54,7 +54,7 @@
        meta-eicke (meta-digi has no wrynose branch). -->
   <project name="meta-freescale"    path="sources/meta-freescale"    remote="freescale" revision="wrynose"/>
 
-  <project name="meta-eicke"        path="sources/meta-eicke"        remote="github" revision="wrynose">
+  <project name="meta-eicke"        path="sources/meta-eicke"        remote="github" revision="feat/imx8m-amp">
     <!-- Expose the build helper at the workspace root after `repo sync` -->
     <linkfile src="README.md" dest="README.md"/>
     <linkfile src="scripts/eicke-init-build-env" dest="integration-init-build-env"/>
