@@ -19,9 +19,10 @@ RUN wget -q https://storage.googleapis.com/git-repo-downloads/repo \
 # sstate mirror — needs the `websockets` module with `open_timeout` support
 # (>= 10). Ubuntu 22.04's apt package is 9.1 (too old), so install a modern one
 # via pip; /usr/local takes precedence over the distro package.
+# pytest runs the QEMU image tests (meta-eicke/scripts/test, doc/testing.md).
 RUN apt-get update \
     && apt-get install -y --no-install-recommends python3-pip \
-    && pip3 install --no-cache-dir "websockets==12.0" \
+    && pip3 install --no-cache-dir "websockets==12.0" "pytest==8.3.5" \
     && rm -rf /var/lib/apt/lists/*
 
 # IMPORTANT: do not override the CROPS ENTRYPOINT/CMD — it performs the
